@@ -1,0 +1,12 @@
+volume的其本质可以认为是一个容器内部的挂载点，功能类似mount。针对mount，通过man mount查看，其定义如下：
+```
+The mount command calls the mount(2) system call to prepare and graft a special device or the remote node (rhost:path) on to the file system tree at the point mount_point, which
+must be a directory.
+```
+但是docker的volume除了可以挂载目录外，也可以直接挂载文件至容器内部。
+
+# 命令demo
+```
+docker run -v /home/admin/test:/data/test test
+```
+如果没有指定
