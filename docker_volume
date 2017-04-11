@@ -1,3 +1,6 @@
+# docker version
+此文章基于docker 17.03.01-ce。
+
 volume的其本质可以认为是一个容器内部的挂载点，功能类似mount。针对mount，通过man mount查看，其定义如下：
 ```
 The mount command calls the mount(2) system call to prepare and graft a special device or the remote node (rhost:path) on to the file system tree at the point mount_point, which
@@ -7,6 +10,24 @@ must be a directory.
 
 # 命令demo
 ```
-docker run -v /home/admin/test:/data/test test
+docker run -v <host path>:<container path> test
 ```
-如果没有指定
+如果没有指定<host path>，docker启动容器时会在宿主机上随机的生成一个volumeID的文件，并一般存放在/var/lib/docker/volume下面，并且<container path>下面的文件会copy至<host path>;
+如果指定了<host path>, docker启动容器时，<host path>会被挂载进容器，这个时候<container path>下面原先存在的文件会被隐藏。
+
+# 创建volume
+volume创建方式有三种：
+（1）从容器挂载
+（2）从宿主机挂载
+（3）共享其他容器volume
+首先，需要判断挂载对象的类型；
+其次，daemon做了下列操作：
+（1）根据配置文件信息生成Mount列表，此列表包含了volume和容器之间的对应关系；
+（2）初始化所有的Mount；
+（3）将Mount对象传递给libcontainer执行挂载的相关操作；
+
+# 删除volume
+```
+docker rm -v container_id
+```
+一般没有被引用的volume都可以通过此命令删除，当然也可以强制通过docker自带的volume工具操作，比如docker volume prune
